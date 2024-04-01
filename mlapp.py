@@ -14,15 +14,15 @@ import argparse
 import os
 # import tensorflow as tf
 # from tensorflow import keras
-from tensorflow.python.keras.datasets import mnist
-from tensorflow.python.keras.models import Sequential, load_model
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-from tensorflow.python.keras.utils import to_categorical
+# from tensorflow.python.keras.datasets import mnist
+# from tensorflow.python.keras.models import Sequential, load_model
+# from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+# from tensorflow.python.keras.utils import to_categorical
 #  probably because of the cpu?
-# from tensorflow.keras.datasets import mnist
-# from tensorflow.keras.models import Sequential, load_model
-# from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-# from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.utils import to_categorical
 import numpy as np
 import pandas as pd
 from PIL import Image
