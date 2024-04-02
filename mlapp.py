@@ -36,18 +36,20 @@ def load_image(image_path):
 
 def predict_single_image(model, image_path):
     image = load_image(image_path)
-    image = image.reshape(1, 28, 28, 1)  # Reshape for the model (LeNet expects 4D images_path)
+    image = image.reshape(-1, 28, 28, 1)  # Reshape for the model (LeNet expects 4D images_path)
     prediction = model.predict(image)
     predicted_class = np.argmax(prediction)
     return predicted_class
 
 def predict_images_in_folder(model, folder_path):
     predictions = []
-    for filename in os.listdir(folder_path):
-        if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-            image_path = os.path.join(folder_path, filename)
-            predicted_class = predict_single_image(model, image_path)
-            predictions.append((image_path, predicted_class))
+    for root, _, files in os.walk(folder_path):
+        for filename in files:
+            # print(filename)
+            if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                image_path = os.path.join(root, filename)
+                predicted_class = predict_single_image(model, image_path)
+                predictions.append((image_path, predicted_class))
     return predictions
 
 def evaluate_model(model_file_name, x_test, y_test):
@@ -116,8 +118,9 @@ def main():
         evaluate_model(model_file_name=args.model_h5, x_test=x_test, y_test=y_test)
 
     # Predict images in a folder
-    if args.predict and args.images_path:
+    if args.predict:
         predictions = predict_images_in_folder(loaded_model, args.images_path)
+        # print(predictions)
         df = pd.DataFrame(predictions, columns=['Image', 'Predicted'])
         df.to_csv('predictions.csv', index=False)
         print(f"Predictions saved to predictions.csv")
