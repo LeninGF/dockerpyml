@@ -1,0 +1,18 @@
+name: tfwin
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - cudatoolkit=11.2
+  - cudnn=8.1.0
+  - ca-certificates
+  - openssl
+  - jedi
+  - pandas
+  - matplotlib
+  - scipy
+  - certifi
+  - scikit-learn
+  - jupyter
+  - notebook
+prefix: D:\miniforge3\envs\tfwin
