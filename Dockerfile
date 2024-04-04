@@ -15,14 +15,11 @@ COPY entrypoint.sh /app/entrypoint.sh
 # RUN pip install --no-cache-dir -r requirements.txt
 
 # USING ANACONDA TO INSTALL PACKAGES
-# RUN conda install --yes --file requirements.txt
+# RUN /opt/conda/bin/conda update -n base -c defaults conda
 RUN conda env create -f environment.yml
-# RUN chmod +x /app/entrypoint.sh
-SHELL [ "conda", "run", "-n", "tfwin", "/bin/bash", "-c" ]
-# RUN python -c "import tensorflow as tf"
+# SHELL [ "conda", "run", "-n", "tfwin", "/bin/bash", "-c" ]
 
-ENTRYPOINT ["conda", "run", "-n", "tfwin", "python", "mlapp.py", "--train", "--evaluate", "--save_model"]
-# ENTRYPOINT [ "/app/entrypoint.sh" ]
+
 
 
 

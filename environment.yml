@@ -15,4 +15,4 @@ dependencies:
   - scikit-learn
   - jupyter
   - notebook
-prefix: D:\miniforge3\envs\tfwin
+
