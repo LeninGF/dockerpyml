@@ -70,7 +70,7 @@ def main():
     parser.add_argument('--predict', action='store_true', help='Predict images in a folder')
     parser.add_argument('--images_path', type=str, help='Location of the image folder for prediction')
     parser.add_argument('--save_model', action='store_true', help='Save the trained model to the specified location')
-    parser.add_argument('--model_h5', default='lenet.h5',  type=str, help='Load a pre-trained model from the specified location')
+    parser.add_argument('--model_h5', default='/falconiel/app/models/lenet.h5',  type=str, help='Load a pre-trained model from the specified location')
     args = parser.parse_args()
 
     # Load dataset
@@ -104,7 +104,7 @@ def main():
 
         # Save the trained model
         if args.save_model:
-            output_file = 'lenet.h5'
+            output_file = os.path.join(os.getcwd(), 'models', 'lenet.h5')
             model.save(output_file)
             print(f"Model saved to {output_file}")
 
@@ -122,7 +122,8 @@ def main():
         predictions = predict_images_in_folder(loaded_model, args.images_path)
         # print(predictions)
         df = pd.DataFrame(predictions, columns=['Image', 'Predicted'])
-        df.to_csv('predictions.csv', index=False)
+        predictions_path = os.path.join(os.getcwd(),'outputs', 'predictions.csv')
+        df.to_csv(predictions_path, index=False)
         print(f"Predictions saved to predictions.csv")
 
 if __name__ == "__main__":
