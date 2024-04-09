@@ -25,6 +25,11 @@ Este repositorio tiene por objeto estudiar usar docker para un script de python 
     
     docker run -it dockerpyml /bin/bash -c "source activate mlenv && python mlapp.py --train --evaluate --save_model"
 
+## To run from root with Volumes
+
+    docker run -it --rm  -v /home/falconiel/CodePrograms/dockerpyml/sample_dataset/:/falconiel/app/sample_dataset -v /home/falconiel/CodePrograms/dockerpyml/outputs/:/falconiel/app/outputs dockerpyml /bin/bash -c "source activate mlenv && python mlapp.py --train --evaluate --save_model --predict --images_path /falconiel/app/sample_dataset" >> mylog.log 2>&1
+    
+
 
 
     
