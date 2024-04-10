@@ -23,6 +23,7 @@ from tensorflow.keras.datasets import mnist
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from tensorflow.keras.utils import to_categorical
+from src.utils import conectar_sql
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -71,7 +72,16 @@ def main():
     parser.add_argument('--images_path', type=str, help='Location of the image folder for prediction')
     parser.add_argument('--save_model', action='store_true', help='Save the trained model to the specified location')
     parser.add_argument('--model_h5', default='/falconiel/app/models/lenet.h5',  type=str, help='Load a pre-trained model from the specified location')
+    parser.add_argument('--read_sql', action='store_true', help='To execute a sql query to read from a mysql database')
+    parser.add_argument('--save_sql', action='store_true', help='To write to sql table a pandas dataframe')
     args = parser.parse_args()
+    # Read env variables
+    
+    DB_USER = os.environ.get('DB_USER')
+    DB_BBDD_PASSWORD = os.environ.get('DB_PASSWORD')
+    DB_ANALITICA = os.environ.get('DB_ANALITICA')
+    DB_ANALITICA_PASSWORD = os.environ.get('DB_ANALITICA_PASSWORD')
+    DB_BBDD_HOST = os.environ.get('DB_HOST')
 
     # Load dataset
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -108,23 +118,37 @@ def main():
             model.save(output_file)
             print(f"Model saved to {output_file}")
 
-    # Load a pre-trained model
-    print(args.model_h5)
-    loaded_model = load_model(args.model_h5)
-    print(f"Model loaded from {args.model_h5}")
-
     # Evaluate the model
     if args.evaluate:
         evaluate_model(model_file_name=args.model_h5, x_test=x_test, y_test=y_test)
 
     # Predict images in a folder
     if args.predict:
+        # Load a pre-trained model
+        print(args.model_h5)
+        loaded_model = load_model(args.model_h5)
+        print(f"Model loaded from {args.model_h5}")
         predictions = predict_images_in_folder(loaded_model, args.images_path)
         # print(predictions)
         df = pd.DataFrame(predictions, columns=['Image', 'Predicted'])
         predictions_path = os.path.join(os.getcwd(),'outputs', 'predictions.csv')
         df.to_csv(predictions_path, index=False)
         print(f"Predictions saved to predictions.csv")
+
+    if args.read_sql:
+        # Executing a sql query to retrieve data from database
+        print(DB_USER, DB_BBDD_PASSWORD, DB_BBDD_HOST)
+        conx = conectar_sql(db_user=DB_USER,
+                            analitica_user_password=DB_BBDD_PASSWORD,
+                            analitica_host=DB_BBDD_HOST)
+        query = """SELECT robos.delitos_validados_unified_siaf, count(robos.NDD) 
+                    FROM DaaS.robosML_copy robos
+                    group by robos.delitos_validados_unified_siaf
+                    order by count(robos.NDD) desc;"""
+        df_sql = pd.read_sql(query, conx)
+        print(f"La consulta SQL genera: {df_sql.shape} resultados")
+        output_sql = os.path.join(os.getcwd(),'outputs', 'reading_sql.csv')
+        df_sql.to_csv(output_sql)
 
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@ FROM continuumio/anaconda3
 WORKDIR /falconiel/app
 
 COPY mlapp.py .
+COPY src /falconiel/app/src
 # COPY mlenv.yml .
 COPY mlenv.txt  .
 COPY requirements.txt .
