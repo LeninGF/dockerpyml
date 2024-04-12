@@ -12,7 +12,7 @@ datos con el modelo entrenado y salver las predicciones a disco
 """
 import argparse
 import os
-# import tensorflow as tf
+import tensorflow as tf
 # from tensorflow import keras
 # from tensorflow.python.keras.datasets import mnist
 # from tensorflow.python.keras.models import Sequential, load_model
@@ -28,6 +28,13 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
+def check_gpu_avaible():
+    if tf.test.is_gpu_available():
+        print(f"GPU name: {tf.config.list_physical_devices('GPU')}")
+    else:
+        print(f"Tensorflow is using CPU")
+
+
 def load_image(image_path):
     image = Image.open(image_path).convert('L')
     image = image.resize((28, 28))
@@ -35,12 +42,14 @@ def load_image(image_path):
     image = image / 255.0
     return image
 
+
 def predict_single_image(model, image_path):
     image = load_image(image_path)
     image = image.reshape(-1, 28, 28, 1)  # Reshape for the model (LeNet expects 4D images_path)
     prediction = model.predict(image)
     predicted_class = np.argmax(prediction)
     return predicted_class
+
 
 def predict_images_in_folder(model, folder_path):
     predictions = []
@@ -53,11 +62,12 @@ def predict_images_in_folder(model, folder_path):
                 predictions.append((image_path, predicted_class))
     return predictions
 
+
 def evaluate_model(model_file_name, x_test, y_test):
     model = load_model_from_disk(model_file_name)
     loss, accuracy = model.evaluate(x_test.reshape(-1, 28, 28, 1), y_test)
     print(f"Model accuracy: {accuracy*100:.2f}%\bModel Loss: {loss:.2f}")
-    
+
 
 def load_model_from_disk(model_name):
     this_model = load_model(model_name)
@@ -110,6 +120,7 @@ def main():
 
     # Train the model
     if args.train:
+        check_gpu_avaible()
         model.fit(x_train.reshape(-1, 28, 28, 1), y_train, epochs=5, verbose=1)
 
         # Save the trained model
