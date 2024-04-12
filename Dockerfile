@@ -10,34 +10,27 @@ COPY mlapp.py .
 COPY src /falconiel/app/src
 # COPY mlenv.yml .
 COPY mlenv.txt  .
+COPY tfmlenv.txt .
 COPY requirements.txt .
-# COPY environment3.yml .
-# COPY entrypoint.sh /app/entrypoint.sh
-
-# USING PIP TO INSTALL PACKAGES
-# RUN pip install --upgrade pip
-# RUN pip install --no-cache-dir -r requirements.txt
 
 # USING ANACONDA TO INSTALL PACKAGES
-# RUN /opt/conda/bin/conda activate
+
 RUN /opt/conda/bin/conda update -n base -c defaults conda
-# RUN conda env create -f mlenv.yml 
-RUN conda create --name mlenv --file mlenv.txt
+# RUN conda create --name mlenv --file mlenv.txt
+RUN  conda create --name tfmlenv --file tfmlenv.txt
 
 # Activate the conda environment and install pip packages from the requirements.txt file
-SHELL ["conda", "run", "-n", "mlenv", "/bin/bash", "-c"]
-RUN pip install -r requirements.txt
+# SHELL ["conda", "run", "-n", "mlenv", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "tfmlenv", "/bin/bash", "-c"]
+# RUN pip install -r requirements.txt
 
 # Make sure the environment is activated:
-RUN echo "source activate mlenv" >> ~/.bashrc
+# RUN echo "source activate mlenv" >> ~/.bashrc
+RUN echo "source activate tfmlenv" >> ~/.bashrc
 
-# RUN mamba env create -f environment3.yml
-# RUN mamba install --yes --file environment3.yml 
-#&& micromamba clean --all --yes
-# SHELL [ "conda", "run", "-n", "tfwin", "/bin/bash", "-c" ]
-# Add the 'conda activate' command to .bashrc
-# RUN echo "conda activate mlenv" >> ~/.bashrc
-
+# Assuming your environment activation and Python script are part of the Docker image,
+# you can specify them in the CMD instruction.
+# CMD ["bash", "-c", "source activate tfmlenv && python mlapp.py --train --evaluate --save_model --read_sql"]
 
 
 
